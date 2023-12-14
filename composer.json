@@ -1,0 +1,11 @@
+{
+  "name": "eashigaev/ddd-php-project-management-practice",
+  "type": "draft",
+  "description": "The practice of applying Domain-Driven Design and architectural practices in the domain of project management.",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "ProjectManagement\\": "./"
+    }
+  }
+}
