@@ -14,17 +14,17 @@ readonly class PolicyService implements PolicyServiceInterface
     {
     }
 
-    public function isProjectActive(string $projectId): bool
+    public function isProjectLocked(string $projectId): bool
     {
         $activity = $this->projectActivityRepository->ofProjectId($projectId);
 
-        return !$activity || !$activity->isStopped;
+        return $activity && $activity->isStopped;
     }
 
-    public function isTaskActive(string $taskId): bool
+    public function isTaskLocked(string $taskId): bool
     {
         $activity = $this->taskActivityRepository->ofTaskId($taskId);
 
-        return $this->isProjectActive($activity->projectId) && (!$activity || !$activity->hasResult());
+        return ($activity && $activity->hasResult()) || $this->isProjectLocked($activity->projectId);
     }
 }
