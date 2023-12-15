@@ -14,6 +14,7 @@ class TaskSpecification
     public string $name;
     public string $description;
     public int $hours;
+    public bool $isClosed;
 
     public static function add(string $id, ProjectSpecification $project, string $taskId, string $name, string $description): static
     {
@@ -24,17 +25,29 @@ class TaskSpecification
         $self->name = $name;
         $self->description = $description;
         $self->hours = 0;
+        $self->isClosed = false;
         return $self;
     }
 
     public function change(string $name, string $description): void
     {
+        assert(!$this->isClosed);
+
         $this->name = $name;
         $this->description = $description;
     }
 
     public function estimate(int $hours): void
     {
+        assert(!$this->isClosed);
+
         $this->hours = $hours;
+    }
+
+    public function close(): void
+    {
+        assert(!$this->isClosed);
+
+        $this->isClosed = true;
     }
 }

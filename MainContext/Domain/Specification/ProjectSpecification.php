@@ -12,6 +12,7 @@ class ProjectSpecification
     public string $projectId; //unique
     public string $name;
     public string $code; //unique
+    public bool $isClosed;
 
     public static function add(string $id, string $projectId, string $name, string $code): static
     {
@@ -20,12 +21,22 @@ class ProjectSpecification
         $self->projectId = $projectId;
         $self->name = $name;
         $self->code = $code;
+        $self->isClosed = false;
         return $self;
     }
 
     public function change(string $name, string $code): void
     {
+        assert(!$this->isClosed);
+
         $this->name = $name;
         $this->code = $code;
+    }
+
+    public function close(): void
+    {
+        assert(!$this->isClosed);
+
+        $this->isClosed = true;
     }
 }

@@ -4,7 +4,7 @@ namespace ProjectManagement\MainContext\Domain;
 
 interface PolicyServiceInterface
 {
-    public function isProjectLocked(string $projectId): bool;
+    public function isProjectClosed(string $projectId): bool;
 
-    public function isTaskLocked(string $taskId): bool;
+    public function isTaskClosed(string $taskId): bool;
 }

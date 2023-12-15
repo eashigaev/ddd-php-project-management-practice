@@ -26,7 +26,7 @@ readonly class TaskAppService
 
     public function addTaskSpecification(string $projectId, string $name, string $description): void
     {
-        assert(!$this->policyService->isProjectLocked($projectId));
+        assert(!$this->policyService->isProjectClosed($taskId));
 
         $project = $this->projectSpecificationRepository->ofProjectId($projectId);
         assert($project);
@@ -39,7 +39,7 @@ readonly class TaskAppService
 
     public function changeTaskSpecification(string $taskId, string $name, string $description): void
     {
-        assert(!$this->policyService->isTaskLocked($taskId));
+        assert(!$this->policyService->isTaskClosed($taskId));
 
         $specification = $this->taskSpecificationRepository->ofTaskId($taskId);
         assert($specification);
@@ -50,7 +50,7 @@ readonly class TaskAppService
 
     public function estimateTaskSpecification(string $taskId, int $hours): void
     {
-        assert(!$this->policyService->isTaskLocked($taskId));
+        assert(!$this->policyService->isTaskClosed($taskId));
 
         $specification = $this->taskSpecificationRepository->ofTaskId($taskId);
         assert($specification);
@@ -59,11 +59,22 @@ readonly class TaskAppService
         $this->taskSpecificationRepository->save($specification);
     }
 
+    public function closeTaskSpecification(string $taskId): void
+    {
+        assert(!$this->policyService->isTaskClosed($taskId));
+
+        $specification = $this->taskSpecificationRepository->ofTaskId($taskId);
+        assert($specification);
+
+        $specification->close();
+        $this->taskSpecificationRepository->save($specification);
+    }
+
     // TaskActivity
 
     public function openTaskActivity(string $taskId, string $personId): void
     {
-        assert(!$this->policyService->isTaskLocked($taskId));
+        assert(!$this->policyService->isTaskClosed($taskId));
 
         $specification = $this->taskSpecificationRepository->ofTaskId($taskId);
         assert($specification);
@@ -77,7 +88,7 @@ readonly class TaskAppService
 
     public function assignTaskActivity(string $taskId, string $personId): void
     {
-        assert(!$this->policyService->isTaskLocked($taskId));
+        assert(!$this->policyService->isTaskClosed($taskId));
 
         $activity = $this->taskActivityRepository->ofTaskId($taskId);
         assert($activity);
@@ -91,7 +102,7 @@ readonly class TaskAppService
 
     public function evaluateTaskActivity(string $taskId, int $hours, int $completion): void
     {
-        assert(!$this->policyService->isTaskLocked($taskId));
+        assert(!$this->policyService->isTaskClosed($taskId));
 
         $activity = $this->taskActivityRepository->ofTaskId($taskId);
         assert($activity);
@@ -102,7 +113,7 @@ readonly class TaskAppService
 
     public function startTaskActivity(string $taskId): void
     {
-        assert(!$this->policyService->isTaskLocked($taskId));
+        assert(!$this->policyService->isTaskClosed($taskId));
 
         $activity = $this->taskActivityRepository->ofTaskId($taskId);
         assert($activity);
@@ -113,7 +124,7 @@ readonly class TaskAppService
 
     public function stopTaskActivity(string $taskId): void
     {
-        assert(!$this->policyService->isTaskLocked($taskId));
+        assert(!$this->policyService->isTaskClosed($taskId));
 
         $activity = $this->taskActivityRepository->ofTaskId($taskId);
         assert($activity);
@@ -124,7 +135,7 @@ readonly class TaskAppService
 
     public function completeTaskActivity(string $taskId): void
     {
-        assert(!$this->policyService->isTaskLocked($taskId));
+        assert(!$this->policyService->isTaskClosed($taskId));
 
         $activity = $this->taskActivityRepository->ofTaskId($taskId);
         assert($activity);
@@ -135,7 +146,7 @@ readonly class TaskAppService
 
     public function cancelTaskActivity(string $taskId): void
     {
-        assert(!$this->policyService->isTaskLocked($taskId));
+        assert(!$this->policyService->isTaskClosed($taskId));
 
         $activity = $this->taskActivityRepository->ofTaskId($taskId);
         assert($activity);

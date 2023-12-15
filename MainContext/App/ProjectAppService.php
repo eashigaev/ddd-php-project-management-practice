@@ -34,7 +34,7 @@ readonly class ProjectAppService
 
     public function changeProjectSpecification(string $projectId, string $name, string $code): void
     {
-        assert(!$this->policyService->isProjectLocked($projectId));
+        assert(!$this->policyService->isProjectClosed($projectId));
 
         $specification = $this->projectSpecificationRepository->ofProjectId($projectId);
         assert($specification);
@@ -43,10 +43,23 @@ readonly class ProjectAppService
         $this->projectSpecificationRepository->save($specification);
     }
 
+    public function closeProjectSpecification(string $projectId): void
+    {
+        assert(!$this->policyService->isProjectClosed($projectId));
+
+        $specification = $this->projectSpecificationRepository->ofProjectId($projectId);
+        assert($specification);
+
+        $specification->close();
+        $this->projectSpecificationRepository->save($specification);
+    }
+
     // ProjectTeam
 
     public function makeProjectTeam(string $projectId, string $personId): void
     {
+        assert(!$this->policyService->isProjectClosed($projectId));
+
         $specification = $this->projectSpecificationRepository->ofProjectId($projectId);
         assert($specification);
 
@@ -59,7 +72,7 @@ readonly class ProjectAppService
 
     public function addProjectTeamMember(string $projectId, string $personId, string $role): void
     {
-        assert(!$this->policyService->isProjectLocked($projectId));
+        assert(!$this->policyService->isProjectClosed($projectId));
 
         $team = $this->projectTeamRepository->ofProjectId($projectId);
         assert($team);
@@ -73,7 +86,7 @@ readonly class ProjectAppService
 
     public function changeProjectTeamMemberRole(string $projectId, string $personId, string $role): void
     {
-        assert(!$this->policyService->isProjectLocked($projectId));
+        assert(!$this->policyService->isProjectClosed($projectId));
 
         $team = $this->projectTeamRepository->ofProjectId($projectId);
         assert($team);
@@ -84,7 +97,7 @@ readonly class ProjectAppService
 
     public function removeProjectTeamMember(string $projectId, string $personId): void
     {
-        assert(!$this->policyService->isProjectLocked($projectId));
+        assert(!$this->policyService->isProjectClosed($projectId));
 
         $team = $this->projectTeamRepository->ofProjectId($projectId);
         assert($team);
@@ -97,6 +110,8 @@ readonly class ProjectAppService
 
     public function startProjectActivity(string $projectId): void
     {
+        assert(!$this->policyService->isProjectClosed($projectId));
+
         $specification = $this->projectSpecificationRepository->ofProjectId($projectId);
         assert($specification);
 
@@ -109,6 +124,8 @@ readonly class ProjectAppService
 
     public function stopProjectActivity(string $projectId): void
     {
+        assert(!$this->policyService->isProjectClosed($projectId));
+
         $activity = $this->projectActivityRepository->ofProjectId($projectId);
         assert($activity);
 

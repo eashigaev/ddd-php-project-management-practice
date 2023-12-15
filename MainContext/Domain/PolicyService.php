@@ -2,29 +2,31 @@
 
 namespace ProjectManagement\MainContext\Domain;
 
-use ProjectManagement\MainContext\Domain\Activity\ProjectActivityRepositoryInterface;
-use ProjectManagement\MainContext\Domain\Activity\TaskActivityRepositoryInterface;
+use ProjectManagement\MainContext\Domain\Specification\ProjectSpecificationRepositoryInterface;
+use ProjectManagement\MainContext\Domain\Specification\TaskSpecificationRepositoryInterface;
 
 readonly class PolicyService implements PolicyServiceInterface
 {
     public function __construct(
-        private ProjectActivityRepositoryInterface $projectActivityRepository,
-        private TaskActivityRepositoryInterface    $taskActivityRepository,
+        private ProjectSpecificationRepositoryInterface $projectSpecificationRepository,
+        private TaskSpecificationRepositoryInterface    $taskSpecificationRepository
     )
     {
     }
 
-    public function isProjectLocked(string $projectId): bool
+    public function isProjectClosed(string $projectId): bool
     {
-        $activity = $this->projectActivityRepository->ofProjectId($projectId);
+        $specification = $this->projectSpecificationRepository->ofProjectId($projectId);
+        assert($specification);
 
-        return $activity && $activity->isStopped;
+        return $specification->isClosed;
     }
 
-    public function isTaskLocked(string $taskId): bool
+    public function isTaskClosed(string $taskId): bool
     {
-        $activity = $this->taskActivityRepository->ofTaskId($taskId);
+        $specification = $this->taskSpecificationRepository->ofTaskId($taskId);
+        assert($specification);
 
-        return ($activity && $activity->hasResult()) || $this->isProjectLocked($activity->projectId);
+        return $specification->isClosed || $this->isProjectClosed($specification->projectId);
     }
 }
