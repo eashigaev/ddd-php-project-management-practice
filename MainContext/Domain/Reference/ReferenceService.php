@@ -1,11 +1,11 @@
 <?php
 
-namespace ProjectManagement\MainContext\Domain;
+namespace ProjectManagement\MainContext\Domain\Reference;
 
 use ProjectManagement\MainContext\Domain\Specification\ProjectSpecificationRepositoryInterface;
 use ProjectManagement\MainContext\Domain\Specification\TaskSpecificationRepositoryInterface;
 
-readonly class PolicyService implements PolicyServiceInterface
+readonly class ReferenceService implements ReferenceServiceInterface
 {
     public function __construct(
         private ProjectSpecificationRepositoryInterface $projectSpecificationRepository,

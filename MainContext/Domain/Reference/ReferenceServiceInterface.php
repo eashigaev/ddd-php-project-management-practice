@@ -1,8 +1,8 @@
 <?php
 
-namespace ProjectManagement\MainContext\Domain;
+namespace ProjectManagement\MainContext\Domain\Reference;
 
-interface PolicyServiceInterface
+interface ReferenceServiceInterface
 {
     public function isProjectClosed(string $projectId): bool;
 

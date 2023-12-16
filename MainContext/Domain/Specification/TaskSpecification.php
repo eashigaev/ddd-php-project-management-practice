@@ -31,16 +31,12 @@ class TaskSpecification
 
     public function change(string $name, string $description): void
     {
-        assert(!$this->isClosed);
-
         $this->name = $name;
         $this->description = $description;
     }
 
     public function estimate(int $hours): void
     {
-        assert(!$this->isClosed);
-
         $this->hours = $hours;
     }
 

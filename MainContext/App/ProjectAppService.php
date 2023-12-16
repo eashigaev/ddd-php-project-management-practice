@@ -2,13 +2,13 @@
 
 namespace ProjectManagement\MainContext\App;
 
+use ProjectManagement\Kernel\Infra\Authorizer\AuthorizerInterface;
 use ProjectManagement\MainContext\Domain\Activity\ProjectActivity;
 use ProjectManagement\MainContext\Domain\Activity\ProjectActivityRepositoryInterface;
 use ProjectManagement\MainContext\Domain\Collaboration\ProjectRole;
 use ProjectManagement\MainContext\Domain\Collaboration\ProjectTeam;
 use ProjectManagement\MainContext\Domain\Collaboration\ProjectTeamRepositoryInterface;
 use ProjectManagement\MainContext\Domain\PersonRepositoryInterface;
-use ProjectManagement\MainContext\Domain\PolicyServiceInterface;
 use ProjectManagement\MainContext\Domain\Specification\ProjectSpecification;
 use ProjectManagement\MainContext\Domain\Specification\ProjectSpecificationRepositoryInterface;
 
@@ -19,7 +19,7 @@ readonly class ProjectAppService
         private ProjectSpecificationRepositoryInterface $projectSpecificationRepository,
         private ProjectTeamRepositoryInterface          $projectTeamRepository,
         private ProjectActivityRepositoryInterface      $projectActivityRepository,
-        private PolicyServiceInterface                  $policyService
+        private AuthorizerInterface                     $authorizer
     )
     {
     }
@@ -28,13 +28,19 @@ readonly class ProjectAppService
 
     public function addProjectSpecification(string $name, string $code): void
     {
+        $this->authorizer->authorize([
+            '@name' => ProjectAction::AddProjectSpecification
+        ]);
+
         $specification = ProjectSpecification::add(uniqid(), uniqid(), $name, $code);
         $this->projectSpecificationRepository->save($specification);
     }
 
     public function changeProjectSpecification(string $projectId, string $name, string $code): void
     {
-        assert(!$this->policyService->isProjectClosed($projectId));
+        $this->authorizer->authorize([
+            '@name' => ProjectAction::ChangeProjectSpecification, 'projectId' => $projectId
+        ]);
 
         $specification = $this->projectSpecificationRepository->ofProjectId($projectId);
         assert($specification);
@@ -45,7 +51,9 @@ readonly class ProjectAppService
 
     public function closeProjectSpecification(string $projectId): void
     {
-        assert(!$this->policyService->isProjectClosed($projectId));
+        $this->authorizer->authorize([
+            '@name' => ProjectAction::ChangeProjectSpecification, 'projectId' => $projectId
+        ]);
 
         $specification = $this->projectSpecificationRepository->ofProjectId($projectId);
         assert($specification);
@@ -58,7 +66,9 @@ readonly class ProjectAppService
 
     public function makeProjectTeam(string $projectId, string $personId): void
     {
-        assert(!$this->policyService->isProjectClosed($projectId));
+        $this->authorizer->authorize([
+            '@name' => ProjectAction::MakeProjectTeam, 'projectId' => $projectId
+        ]);
 
         $specification = $this->projectSpecificationRepository->ofProjectId($projectId);
         assert($specification);
@@ -72,7 +82,9 @@ readonly class ProjectAppService
 
     public function addProjectTeamMember(string $projectId, string $personId, string $role): void
     {
-        assert(!$this->policyService->isProjectClosed($projectId));
+        $this->authorizer->authorize([
+            '@name' => ProjectAction::AddProjectTeamMember, 'projectId' => $projectId
+        ]);
 
         $team = $this->projectTeamRepository->ofProjectId($projectId);
         assert($team);
@@ -86,7 +98,9 @@ readonly class ProjectAppService
 
     public function changeProjectTeamMemberRole(string $projectId, string $personId, string $role): void
     {
-        assert(!$this->policyService->isProjectClosed($projectId));
+        $this->authorizer->authorize([
+            '@name' => ProjectAction::ChangeProjectTeamMemberRole, 'projectId' => $projectId
+        ]);
 
         $team = $this->projectTeamRepository->ofProjectId($projectId);
         assert($team);
@@ -97,7 +111,9 @@ readonly class ProjectAppService
 
     public function removeProjectTeamMember(string $projectId, string $personId): void
     {
-        assert(!$this->policyService->isProjectClosed($projectId));
+        $this->authorizer->authorize([
+            '@name' => ProjectAction::ChangeProjectTeamMemberRole, 'projectId' => $projectId
+        ]);
 
         $team = $this->projectTeamRepository->ofProjectId($projectId);
         assert($team);
@@ -110,7 +126,9 @@ readonly class ProjectAppService
 
     public function startProjectActivity(string $projectId): void
     {
-        assert(!$this->policyService->isProjectClosed($projectId));
+        $this->authorizer->authorize([
+            '@name' => ProjectAction::StartProjectActivity, 'projectId' => $projectId
+        ]);
 
         $specification = $this->projectSpecificationRepository->ofProjectId($projectId);
         assert($specification);
@@ -124,7 +142,9 @@ readonly class ProjectAppService
 
     public function stopProjectActivity(string $projectId): void
     {
-        assert(!$this->policyService->isProjectClosed($projectId));
+        $this->authorizer->authorize([
+            '@name' => ProjectAction::StopProjectActivity, 'projectId' => $projectId
+        ]);
 
         $activity = $this->projectActivityRepository->ofProjectId($projectId);
         assert($activity);

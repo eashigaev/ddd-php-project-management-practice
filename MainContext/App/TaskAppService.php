@@ -2,10 +2,10 @@
 
 namespace ProjectManagement\MainContext\App;
 
+use ProjectManagement\Kernel\Infra\Authorizer\AuthorizerInterface;
 use ProjectManagement\MainContext\Domain\Activity\TaskActivity;
 use ProjectManagement\MainContext\Domain\Activity\TaskActivityRepositoryInterface;
 use ProjectManagement\MainContext\Domain\PersonRepositoryInterface;
-use ProjectManagement\MainContext\Domain\PolicyServiceInterface;
 use ProjectManagement\MainContext\Domain\Specification\ProjectSpecificationRepositoryInterface;
 use ProjectManagement\MainContext\Domain\Specification\TaskSpecification;
 use ProjectManagement\MainContext\Domain\Specification\TaskSpecificationRepositoryInterface;
@@ -17,7 +17,7 @@ readonly class TaskAppService
         private ProjectSpecificationRepositoryInterface $projectSpecificationRepository,
         private TaskSpecificationRepositoryInterface    $taskSpecificationRepository,
         private TaskActivityRepositoryInterface         $taskActivityRepository,
-        private PolicyServiceInterface                  $policyService
+        private AuthorizerInterface                     $authorizer
     )
     {
     }
@@ -26,7 +26,9 @@ readonly class TaskAppService
 
     public function addTaskSpecification(string $projectId, string $name, string $description): void
     {
-        assert(!$this->policyService->isProjectClosed($taskId));
+        $this->authorizer->authorize([
+            '@name' => TaskAction::AddTaskSpecification
+        ]);
 
         $project = $this->projectSpecificationRepository->ofProjectId($projectId);
         assert($project);
@@ -39,7 +41,9 @@ readonly class TaskAppService
 
     public function changeTaskSpecification(string $taskId, string $name, string $description): void
     {
-        assert(!$this->policyService->isTaskClosed($taskId));
+        $this->authorizer->authorize([
+            '@name' => TaskAction::ChangeTaskSpecification, 'taskId' => $taskId
+        ]);
 
         $specification = $this->taskSpecificationRepository->ofTaskId($taskId);
         assert($specification);
@@ -50,7 +54,9 @@ readonly class TaskAppService
 
     public function estimateTaskSpecification(string $taskId, int $hours): void
     {
-        assert(!$this->policyService->isTaskClosed($taskId));
+        $this->authorizer->authorize([
+            '@name' => TaskAction::EstimateTaskSpecification, 'taskId' => $taskId
+        ]);
 
         $specification = $this->taskSpecificationRepository->ofTaskId($taskId);
         assert($specification);
@@ -61,7 +67,9 @@ readonly class TaskAppService
 
     public function closeTaskSpecification(string $taskId): void
     {
-        assert(!$this->policyService->isTaskClosed($taskId));
+        $this->authorizer->authorize([
+            '@name' => TaskAction::CloseTaskSpecification, 'taskId' => $taskId
+        ]);
 
         $specification = $this->taskSpecificationRepository->ofTaskId($taskId);
         assert($specification);
@@ -74,7 +82,9 @@ readonly class TaskAppService
 
     public function openTaskActivity(string $taskId, string $personId): void
     {
-        assert(!$this->policyService->isTaskClosed($taskId));
+        $this->authorizer->authorize([
+            '@name' => TaskAction::OpenTaskActivity, 'taskId' => $taskId
+        ]);
 
         $specification = $this->taskSpecificationRepository->ofTaskId($taskId);
         assert($specification);
@@ -88,7 +98,9 @@ readonly class TaskAppService
 
     public function assignTaskActivity(string $taskId, string $personId): void
     {
-        assert(!$this->policyService->isTaskClosed($taskId));
+        $this->authorizer->authorize([
+            '@name' => TaskAction::AssignTaskActivity, 'taskId' => $taskId
+        ]);
 
         $activity = $this->taskActivityRepository->ofTaskId($taskId);
         assert($activity);
@@ -102,7 +114,9 @@ readonly class TaskAppService
 
     public function evaluateTaskActivity(string $taskId, int $hours, int $completion): void
     {
-        assert(!$this->policyService->isTaskClosed($taskId));
+        $this->authorizer->authorize([
+            '@name' => TaskAction::EvaluateTaskActivity, 'taskId' => $taskId
+        ]);
 
         $activity = $this->taskActivityRepository->ofTaskId($taskId);
         assert($activity);
@@ -113,7 +127,9 @@ readonly class TaskAppService
 
     public function startTaskActivity(string $taskId): void
     {
-        assert(!$this->policyService->isTaskClosed($taskId));
+        $this->authorizer->authorize([
+            '@name' => TaskAction::StartTaskActivity, 'taskId' => $taskId
+        ]);
 
         $activity = $this->taskActivityRepository->ofTaskId($taskId);
         assert($activity);
@@ -124,7 +140,9 @@ readonly class TaskAppService
 
     public function stopTaskActivity(string $taskId): void
     {
-        assert(!$this->policyService->isTaskClosed($taskId));
+        $this->authorizer->authorize([
+            '@name' => TaskAction::StopTaskActivity, 'taskId' => $taskId
+        ]);
 
         $activity = $this->taskActivityRepository->ofTaskId($taskId);
         assert($activity);
@@ -135,7 +153,9 @@ readonly class TaskAppService
 
     public function completeTaskActivity(string $taskId): void
     {
-        assert(!$this->policyService->isTaskClosed($taskId));
+        $this->authorizer->authorize([
+            '@name' => TaskAction::CompleteTaskActivity, 'taskId' => $taskId
+        ]);
 
         $activity = $this->taskActivityRepository->ofTaskId($taskId);
         assert($activity);
@@ -146,7 +166,9 @@ readonly class TaskAppService
 
     public function cancelTaskActivity(string $taskId): void
     {
-        assert(!$this->policyService->isTaskClosed($taskId));
+        $this->authorizer->authorize([
+            '@name' => TaskAction::CancelTaskActivity, 'taskId' => $taskId
+        ]);
 
         $activity = $this->taskActivityRepository->ofTaskId($taskId);
         assert($activity);

@@ -27,8 +27,6 @@ class ProjectSpecification
 
     public function change(string $name, string $code): void
     {
-        assert(!$this->isClosed);
-
         $this->name = $name;
         $this->code = $code;
     }
