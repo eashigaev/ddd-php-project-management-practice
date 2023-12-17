@@ -10,7 +10,7 @@
     - Specification - describe project
     - Activity - assign, evaluate, start/stop, result task
 - Policy
-    - The stopped project is locked for changes. 
-    - The resulted task is locked for changes.
+    - Closed project is not available for changes. 
+    - Closed task or task of closed project are not available for changes.
 
-Single context
+Single context. Simple ABAC

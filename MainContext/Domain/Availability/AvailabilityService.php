@@ -1,11 +1,11 @@
 <?php
 
-namespace ProjectManagement\MainContext\Domain\Reference;
+namespace ProjectManagement\MainContext\Domain\Availability;
 
 use ProjectManagement\MainContext\Domain\Specification\ProjectSpecificationRepositoryInterface;
 use ProjectManagement\MainContext\Domain\Specification\TaskSpecificationRepositoryInterface;
 
-readonly class ReferenceService implements ReferenceServiceInterface
+readonly class AvailabilityService implements AvailabilityServiceInterface
 {
     public function __construct(
         private ProjectSpecificationRepositoryInterface $projectSpecificationRepository,
@@ -14,19 +14,19 @@ readonly class ReferenceService implements ReferenceServiceInterface
     {
     }
 
-    public function isProjectClosed(string $projectId): bool
+    public function isProjectAvailable(string $projectId): bool
     {
         $specification = $this->projectSpecificationRepository->ofProjectId($projectId);
         assert($specification);
 
-        return $specification->isClosed;
+        return !$specification->isClosed;
     }
 
-    public function isTaskClosed(string $taskId): bool
+    public function isTaskAvailable(string $taskId): bool
     {
         $specification = $this->taskSpecificationRepository->ofTaskId($taskId);
         assert($specification);
 
-        return $specification->isClosed || $this->isProjectClosed($specification->projectId);
+        return !$specification->isClosed && $this->isProjectAvailable($specification->projectId);
     }
 }
